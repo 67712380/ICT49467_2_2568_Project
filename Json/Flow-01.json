@@ -1,0 +1,261 @@
+{
+  "name": "Flow-01",
+  "nodes": [
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "documentId": {
+          "__rl": true,
+          "value": "1hQe1GBx1kUKt-OVvZmZLGYtbTXDcRNEhbuFPpKg9VZw",
+          "mode": "list",
+          "cachedResultName": "แบบฟอร์มขอเบิกอุปกรณ์",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1hQe1GBx1kUKt-OVvZmZLGYtbTXDcRNEhbuFPpKg9VZw/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 206683453,
+          "mode": "list",
+          "cachedResultName": "การตอบแบบฟอร์ม 1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1hQe1GBx1kUKt-OVvZmZLGYtbTXDcRNEhbuFPpKg9VZw/edit#gid=206683453"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "ba78dfb9-7195-4ee9-a00b-8e18630b9bea",
+      "name": "Google Sheets Trigger",
+      "credentials": {
+        "googleSheetsTriggerOAuth2Api": {
+          "id": "FsFWW6XP91FTS3ih",
+          "name": "Google Sheets Trigger account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "return items.map(item => {\n  const serial = Number(item.json[\"ประทับเวลา\"]);\n\n  if (Number.isNaN(serial)) {\n    item.json[\"วันที่\"] = \"\";\n    return item;\n  }\n\n  const excelEpoch = new Date(1899, 11, 30);\n  const date = new Date(excelEpoch.getTime() + serial * 86400000);\n\n  item.json[\"วันที่\"] = date.toLocaleString(\"th-TH\");\n\n  return item;\n});\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        208,
+        0
+      ],
+      "id": "c42332c6-d040-46e5-a8bc-95a4ee35c9a1",
+      "name": "Code in JavaScript"
+    },
+    {
+      "parameters": {
+        "sendTo": "sakkarat.tai@gmail.com",
+        "subject": "ส่งข้อมูลลงทะเบียน",
+        "emailType": "text",
+        "message": "=ชื่อ-นามสกุล{{ $json['ชื่อ-นามสกุล'] }}\nแผนก {{ $json['แผนก'] }}\nรายชื่ออุปกรณ์ {{ $json['ราชชื่อ - อุปกรณื'] }}\nจำนวน {{ $json['จำนวนที่เบิก'] }}\nวันที่ {{ $json['วันที่'] }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        416,
+        0
+      ],
+      "id": "cc6b58eb-f4f5-47c0-ad10-144c4b9c2fce",
+      "name": "Send a message",
+      "webhookId": "d456d432-7996-4809-ad66-73cb6c51787d",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "B1y4g9VhhdtsocB1",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "path": "data",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        0,
+        224
+      ],
+      "id": "c6aaa130-c250-4283-b1cd-05c117b26a09",
+      "name": "Webhook",
+      "webhookId": "8688a68f-af6f-4a2a-abb7-1ccfa7e361dd"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1hQe1GBx1kUKt-OVvZmZLGYtbTXDcRNEhbuFPpKg9VZw",
+          "mode": "list",
+          "cachedResultName": "แบบฟอร์มขอเบิกอุปกรณ์",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1hQe1GBx1kUKt-OVvZmZLGYtbTXDcRNEhbuFPpKg9VZw/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 206683453,
+          "mode": "list",
+          "cachedResultName": "การตอบแบบฟอร์ม 1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1hQe1GBx1kUKt-OVvZmZLGYtbTXDcRNEhbuFPpKg9VZw/edit#gid=206683453"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        208,
+        224
+      ],
+      "id": "4426fded-af75-48d9-a65a-352cbc86e7e2",
+      "name": "Get row(s) in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "Tzz5Vd3Wv2So8AFb",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "d3ff55da-0c1a-478f-bb8f-1ecbac7f6365",
+              "name": "timestamp",
+              "value": "={{ $json['ประทับเวลา'] }}",
+              "type": "string"
+            },
+            {
+              "id": "b3048a6e-7c59-482b-92b6-639d202401f0",
+              "name": "fullname",
+              "value": "={{ $json['ชื่อ-นามสกุล'] }}",
+              "type": "string"
+            },
+            {
+              "id": "5c41f449-079d-44da-af5e-6d6a0e30545f",
+              "name": "department",
+              "value": "={{ $json['แผนก'] }}",
+              "type": "string"
+            },
+            {
+              "id": "2a1e77e9-860b-483f-bff4-f10b178a4dd6",
+              "name": "=itemName",
+              "value": "={{ $json['ราชชื่อ - อุปกรณ์'] }}",
+              "type": "string"
+            },
+            {
+              "id": "08fefbaa-d2c8-4c02-9428-f0ca83e15706",
+              "name": "quantity",
+              "value": "= {{ $json['จำนวนที่เบิก'] }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        416,
+        224
+      ],
+      "id": "852625f1-84bb-4475-bf10-548f3dd7bf1e",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "respondWith": "allIncomingItems",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.5,
+      "position": [
+        624,
+        224
+      ],
+      "id": "1f6c83c0-2ee4-4f41-be7a-3287341c298a",
+      "name": "Respond to Webhook"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Google Sheets Trigger": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Get row(s) in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s) in sheet": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "6b7261f9-a419-4c05-b576-8007f8b0f5b7",
+  "meta": {
+    "instanceId": "0a125e46a1edc7517d26c8d300f96f70d272b51c3b9cad0afdd928849901f792"
+  },
+  "id": "yShuremRPVxAibCg",
+  "tags": []
+}

@@ -1,0 +1,178 @@
+{
+  "name": "API-googlesheets-vue",
+  "nodes": [
+    {
+      "parameters": {
+        "path": "data",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "9f4daa06-fb64-4434-92ed-23d33f4a4b9e",
+      "name": "Webhook",
+      "webhookId": "8688a68f-af6f-4a2a-abb7-1ccfa7e361dd"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1lRH6N_xVUsgXnWZcDZeoz_lV-C1vCTuxj_jK4PgA9mM",
+          "mode": "list",
+          "cachedResultName": "แบบฟอร์มลงทะเบียน_Week5",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1lRH6N_xVUsgXnWZcDZeoz_lV-C1vCTuxj_jK4PgA9mM/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1716315883,
+          "mode": "list",
+          "cachedResultName": "Week5",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1lRH6N_xVUsgXnWZcDZeoz_lV-C1vCTuxj_jK4PgA9mM/edit#gid=1716315883"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        208,
+        0
+      ],
+      "id": "7cd9c143-44d2-4bd0-b811-14181531af3e",
+      "name": "Get row(s) in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "Tzz5Vd3Wv2So8AFb",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "d3ff55da-0c1a-478f-bb8f-1ecbac7f6365",
+              "name": "tdate",
+              "value": "={{ $json['ประทับเวลา'] }}",
+              "type": "string"
+            },
+            {
+              "id": "23446716-237f-49b2-801b-954c336d26d0",
+              "name": "id",
+              "value": "={{ $json['รหัสนักศึกษา'] }}",
+              "type": "number"
+            },
+            {
+              "id": "b3048a6e-7c59-482b-92b6-639d202401f0",
+              "name": "fullname",
+              "value": "={{ $json['ชื่อ-นามสกุล'] }}",
+              "type": "string"
+            },
+            {
+              "id": "5c41f449-079d-44da-af5e-6d6a0e30545f",
+              "name": "department",
+              "value": "={{ $json['คณะ'] }}",
+              "type": "string"
+            },
+            {
+              "id": "2a1e77e9-860b-483f-bff4-f10b178a4dd6",
+              "name": "",
+              "value": "",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        416,
+        0
+      ],
+      "id": "31f4ce73-9da4-413c-bc65-24bc26e1cdef",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "respondWith": "allIncomingItems",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.5,
+      "position": [
+        624,
+        0
+      ],
+      "id": "ccbb43dc-7e18-4d2f-ba0c-1dd324e54d85",
+      "name": "Respond to Webhook"
+    },
+    {
+      "parameters": {
+        "content": "รหัสนักศึกษา : 67712380\nชื่อ - นามสกุล : ศักราช สุวรรณไตร\n\n",
+        "width": 368,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        160,
+        -272
+      ],
+      "typeVersion": 1,
+      "id": "d1116ecf-9db1-4d62-9de8-89c42e902e91",
+      "name": "Sticky Note"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Get row(s) in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s) in sheet": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "afcb33ce-3883-4e03-8e7e-d0db78fdcc5a",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "0a125e46a1edc7517d26c8d300f96f70d272b51c3b9cad0afdd928849901f792"
+  },
+  "id": "IUY6dCIffOtGisp2",
+  "tags": []
+}
