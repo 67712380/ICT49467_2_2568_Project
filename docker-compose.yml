@@ -1,0 +1,16 @@
+services:
+  n8n:
+    image: docker.n8n.io/n8nio/n8n
+    container_name: n8n_week1_67712380
+    restart: always
+
+    ports:
+      - "5678:5678"
+
+    environment:
+      - TZ=Asia/Bangkok
+      - N8N_ENCRYPTION_KEY=fmOSGi3avRd5/5aIATgEp89xFO3cGI1+
+      - N8N_ENFORCE_SETTINGS_FILE_PERMISSIONS=false
+
+    volumes:
+      - ./n8n_data:/home/node/.n8n

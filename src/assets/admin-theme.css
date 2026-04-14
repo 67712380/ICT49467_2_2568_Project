@@ -1,0 +1,110 @@
+.admin-theme {
+  --admin-primary: #6366f1;
+  --admin-secondary: #64748b;
+  --admin-success: #10b981;
+  --admin-warning: #f59e0b;
+  --admin-danger: #ef4444;
+  --admin-bg: #f8fafc;
+  --admin-bg-soft: #f1f5f9;
+  --admin-border: #e2e8f0;
+  --admin-text: #0f172a;
+  --admin-muted: #475569;
+  --admin-radius: 12px;
+  --admin-radius-sm: 8px;
+  --admin-shadow-sm: 0 1px 2px 0 rgba(15, 23, 42, 0.08);
+  --admin-shadow: 0 10px 20px -12px rgba(15, 23, 42, 0.25);
+
+  color: var(--admin-text);
+  font-family: "Inter", "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+}
+
+.admin-theme .admin-card {
+  background: #fff;
+  border: 1px solid var(--admin-border);
+  border-radius: var(--admin-radius);
+  box-shadow: var(--admin-shadow-sm);
+}
+
+.admin-theme .admin-btn-primary {
+  border: 0;
+  color: #fff;
+  background: linear-gradient(135deg, #6366f1, #4f46e5);
+  border-radius: var(--admin-radius-sm);
+  padding: 0.6rem 1rem;
+  font-weight: 600;
+  box-shadow: var(--admin-shadow-sm);
+}
+
+.admin-theme .admin-btn-primary:hover {
+  filter: brightness(1.05);
+}
+
+.admin-theme .admin-btn-primary:disabled {
+  opacity: 0.7;
+}
+
+.admin-theme .admin-table-shell {
+  border: 1px solid var(--admin-border);
+  border-radius: var(--admin-radius);
+  overflow: hidden;
+  background: #fff;
+}
+
+.admin-theme .admin-table thead th {
+  background: var(--admin-bg-soft);
+  color: var(--admin-secondary);
+  font-size: 0.82rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  border-bottom: 1px solid var(--admin-border);
+}
+
+.admin-theme .admin-table tbody td {
+  color: #334155;
+  border-bottom: 1px solid #eef2f7;
+  vertical-align: middle;
+}
+
+.admin-theme .admin-table tbody tr:hover td {
+  background-color: rgba(99, 102, 241, 0.05);
+}
+
+.admin-theme .admin-muted {
+  color: var(--admin-muted);
+}
+
+.admin-theme .admin-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  padding: 0.32rem 0.72rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.admin-theme .admin-badge.success {
+  color: #047857;
+  background: rgba(16, 185, 129, 0.16);
+}
+
+.admin-theme .admin-badge.warning {
+  color: #b45309;
+  background: rgba(245, 158, 11, 0.2);
+}
+
+.admin-theme .admin-badge.danger {
+  color: #b91c1c;
+  background: rgba(239, 68, 68, 0.16);
+}
+
+.admin-theme .admin-input {
+  border-radius: var(--admin-radius-sm);
+  border: 1px solid var(--admin-border);
+}
+
+.admin-theme .admin-input:focus {
+  border-color: var(--admin-primary);
+  box-shadow: 0 0 0 0.2rem rgba(99, 102, 241, 0.18);
+}
