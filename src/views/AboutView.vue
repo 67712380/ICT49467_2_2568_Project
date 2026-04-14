@@ -128,17 +128,17 @@ const normalizeRequests = (payload) => {
 
   return rows
     .map((row, idx) => {
-      const status = readValue(row, ['status', '?????????'], 'Pending')
+      const status = readValue(row, ['status', 'สถานะ', 'สถานะคำขอ'], 'Pending')
 
       return {
         rowNumber: Number(row?.row_number ?? row?.rowNumber ?? idx + 2),
-        timestamp: readValue(row, ['timestamp', '??????????'], '-'),
-        fullname: readValue(row, ['fullname', '????-???????'], '-'),
-        company: readValue(row, ['company', '??????-????????'], '-'),
-        itemName: readValue(row, ['itemName', '?????????????'], '-'),
-        quantity: readValue(row, ['quantity', '????????????'], '-'),
-        email: readValue(row, ['email', 'Email'], '-'),
-        reason: readValue(row, ['reason', '?????????????'], '-'),
+        timestamp: readValue(row, ['timestamp', 'ประทับเวลา'], '-'),
+        fullname: readValue(row, ['fullname', 'ชื่อ', 'นามสกุล', 'ชื่อ-นามสกุล'], '-'),
+        company: readValue(row, ['company', 'บริษัท', 'หน่วยงาน', 'บริษัท/หน่วยงาน'], '-'),
+        itemName: readValue(row, ['itemName', 'อุปกรณ์', 'รายชื่อ', 'รายชื่ออุปกรณ์'], '-'),
+        quantity: readValue(row, ['quantity', 'จำนวน'], '-'),
+        email: readValue(row, ['email', 'Email', 'อีเมล'], '-'),
+        reason: readValue(row, ['reason', 'เหตุผล', 'เหตุผลการเบิก'], '-'),
         status
       }
     })
@@ -148,14 +148,14 @@ const normalizeRequests = (payload) => {
 const pendingCount = computed(() =>
   requests.value.filter((item) => {
     const status = clean(item.status)
-    return status.includes('pending') || status.includes('?????????')
+    return status.includes('pending') || status.includes('รออนุมัติ') || status.includes('รอ')
   }).length
 )
 
 const approvedCount = computed(() =>
   requests.value.filter((item) => {
     const status = clean(item.status)
-    return status.includes('approved') || status.includes('???????')
+    return status.includes('approved') || status.includes('อนุมัติ')
   }).length
 )
 
@@ -166,7 +166,7 @@ const statusClass = (status) => {
     normalized.includes('reject')
     || normalized.includes('not')
     || normalized.includes('return_rejected')
-    || normalized.includes('??????????')
+    || normalized.includes('ไม่อนุมัติ')
   ) {
     return 'status-rejected'
   }
@@ -175,7 +175,7 @@ const statusClass = (status) => {
     normalized.includes('approve')
     || normalized.includes('returned')
     || normalized.includes('complete')
-    || normalized.includes('???????')
+    || normalized.includes('อนุมัติ')
   ) {
     return 'status-approved'
   }

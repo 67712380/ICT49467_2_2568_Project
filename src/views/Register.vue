@@ -8,13 +8,13 @@
             style="background: linear-gradient(135deg, #5b3c96, #7a57c7);"
           >
             <h4 class="mb-1 fw-bold">
-              {{ isAdminMode ? '??????????? (Admin)' : '?????????????????????' }}
+              {{ isAdminMode ? 'ทำรายการคืนอุปกรณ์ (Admin)' : 'ฟอร์มคืนอุปกรณ์' }}
             </h4>
             <small>
               {{
                 isAdminMode
-                  ? '??????????????????????? ??????????????????'
-                  : '??????????????????????? Google Sheets ???? n8n'
+                  ? 'การจัดการข้อมูลการคืนอุปกรณ์ สำหรับ Admin'
+                  : 'ข้อมูลจะถูกส่งเข้า Google Sheets ผ่าน n8n'
               }}
             </small>
           </div>
@@ -33,32 +33,32 @@
                 <table class="table table-bordered align-middle admin-form-table">
                   <tbody>
                     <tr>
-                      <th>????????????</th>
+                      <th>หมายเลข</th>
                       <td>{{ selectedRowNumber || '-' }}</td>
                     </tr>
                     <tr>
-                      <th>????-??????? *</th>
+                      <th>ชื่อ-นามสกุล *</th>
                       <td><input v-model="form.fullname" type="text" class="form-control" required /></td>
                     </tr>
                     <tr>
-                      <th>??????/???????? *</th>
+                      <th>บริษัท/หน่วยงาน *</th>
                       <td><input v-model="form.company" type="text" class="form-control" required /></td>
                     </tr>
                     <tr>
-                      <th>????? *</th>
+                      <th>อีเมล *</th>
                       <td><input v-model="form.email" type="email" class="form-control" required /></td>
                     </tr>
                     <tr>
-                      <th>????????????? *</th>
+                      <th>ชื่ออุปกรณ์ *</th>
                       <td>
                         <select v-model="form.itemName" class="form-select" required>
-                          <option value="" disabled>-- ??????????? --</option>
+                          <option value="" disabled>-- เลือกอุปกรณ์ --</option>
                           <option v-for="option in itemOptions" :key="option" :value="option">{{ option }}</option>
                         </select>
                       </td>
                     </tr>
                     <tr>
-                      <th>????? *</th>
+                      <th>จำนวน *</th>
                       <td>
                         <input
                           v-model.number="form.quantity"
@@ -70,13 +70,13 @@
                       </td>
                     </tr>
                     <tr>
-                      <th>?????????? (Asset Tag) *</th>
+                      <th>เลขเครื่อง (Asset Tag) *</th>
                       <td>
                         <input
                           v-model="form.assetTag"
                           type="text"
                           class="form-control"
-                          placeholder="???? LTP-001"
+                          placeholder="เช่น LTP-001"
                           required
                         />
                       </td>
@@ -87,30 +87,30 @@
 
               <template v-else>
                 <div class="mb-3">
-                  <label class="form-label">????-??????? *</label>
+                  <label class="form-label">ชื่อ-นามสกุล *</label>
                   <input v-model="form.fullname" type="text" class="form-control" required />
                 </div>
 
                 <div class="mb-3">
-                  <label class="form-label">??????/???????? *</label>
+                  <label class="form-label">บริษัท/หน่วยงาน *</label>
                   <input v-model="form.company" type="text" class="form-control" required />
                 </div>
 
                 <div class="mb-3">
-                  <label class="form-label">????? *</label>
+                  <label class="form-label">อีเมล *</label>
                   <input v-model="form.email" type="email" class="form-control" required />
                 </div>
 
                 <div class="mb-3">
-                  <label class="form-label">????????????? *</label>
+                  <label class="form-label">ชื่ออุปกรณ์ *</label>
                   <select v-model="form.itemName" class="form-select" required>
-                    <option value="" disabled>-- ??????????? --</option>
+                    <option value="" disabled>-- เลือกอุปกรณ์ --</option>
                     <option v-for="option in itemOptions" :key="option" :value="option">{{ option }}</option>
                   </select>
                 </div>
 
                 <div class="mb-3">
-                  <label class="form-label">????? *</label>
+                  <label class="form-label">จำนวน *</label>
                   <input
                     v-model.number="form.quantity"
                     type="number"
@@ -121,12 +121,12 @@
                 </div>
 
                 <div class="mb-3">
-                  <label class="form-label">?????????? (Asset Tag) *</label>
+                  <label class="form-label">เลขเครื่อง (Asset Tag) *</label>
                   <input
                     v-model="form.assetTag"
                     type="text"
                     class="form-control"
-                    placeholder="???? LTP-001"
+                    placeholder="เช่น LTP-001"
                     required
                   />
                 </div>
@@ -136,10 +136,10 @@
                 <span v-if="loading" class="spinner-border spinner-border-sm me-2"></span>
                 {{
                   loading
-                    ? '?????????????????...'
+                    ? 'กำลังส่งข้อมูล...'
                     : isAdminMode
-                      ? '?????????????????? Admin'
-                      : '?????????????????????'
+                      ? 'ส่งข้อมูลในฐานะ Admin'
+                      : 'ส่งแบบฟอร์มคืนอุปกรณ์'
                 }}
               </button>
             </form>
@@ -263,8 +263,8 @@ const submitForm = async () => {
     }
 
     status.message = isAdminMode.value
-      ? 'Admin ??????????????????????'
-      : '????????????????????'
+      ? 'Admin บันทึกผลสำเร็จ'
+      : 'ส่งข้อมูลเรียบร้อย'
     status.type = 'success'
 
     if (!isAdminMode.value) {
@@ -272,7 +272,7 @@ const submitForm = async () => {
     }
   } catch (error) {
     console.error(error)
-    status.message = '?????????????? ???????????? n8n flow ???????????'
+    status.message = 'เกิดข้อผิดพลาด กรุณาตรวจสอบ n8n flow'
     status.type = 'danger'
   } finally {
     loading.value = false
