@@ -26,6 +26,7 @@
 </template>
 
 <style>
+@import url('https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded');
 @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600&display=swap');
 
@@ -49,7 +50,7 @@ body {
 
 #app {
   min-height: 100vh;
-  font-family: "Outfit", "Segoe UI", Arial, sans-serif;
+  font-family: "Kanit", "Outfit", "Segoe UI", Arial, sans-serif;
   color: var(--menu-text);
 }
 
