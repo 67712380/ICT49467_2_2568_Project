@@ -1,23 +1,22 @@
-# ICT49467 IT-Asset-Management (Vue + n8n + Google Sheets)
+# ICT49467_2_2568_Project
 
-โปรเจคนี้เป็น “หน้าเว็บสำหรับแอดมิน” เพื่อดูรายการ **เบิกอุปกรณ์** และ **คืนอุปกรณ์** ที่ถูกบันทึกไว้ใน Google Sheets (ข้อมูลมาจาก Google Form) โดยใช้ n8n เป็นตัวกลางดึง/แปลงข้อมูล และส่งให้ Vue แสดงผล
+ระบบจัดการคำขอ "เบิก/คืน" อุปกรณ์ IT โดยใช้ Vue (หน้าเว็บแอดมิน) + n8n (Automation) + Google Sheets (ฐานข้อมูลจาก Google Form)
 
-ข้อสำคัญ
-- ระบบนี้เน้นฝั่งแอดมินเท่านั้น (ไม่มีระบบล็อกอิน/ล็อกเอาท์ในตัวโปรเจค)
-- n8n รันด้วย Docker (`docker-compose.yml`)
-- เวลาเทสด้วยปุ่ม `Execute workflow` ของ n8n จะใช้ URL กลุ่ม `/webhook-test/*`
-- เวลาใช้งานจริง (Production) จะใช้ URL กลุ่ม `/webhook/*` และ “ต้องเปิด Active workflow” ไม่งั้นจะเจอ 404 ว่า webhook ไม่ถูก register
+## ภาพรวมการทำงาน
 
-## โครงสร้างงาน (ภาพรวม)
-
-1. ผู้ใช้กรอกข้อมูลผ่าน Google Form
+1. ผู้ใช้กรอกข้อมูลผ่าน Google Form (ผู้ใช้ไม่เข้าเว็บนี้)
 2. Google Form บันทึกข้อมูลลง Google Sheets
-3. n8n อ่านข้อมูลจากชีต แล้วทำการ “จัดชื่อฟิลด์” ให้เป็น JSON มาตรฐานสำหรับหน้าเว็บ
-4. Vue เรียกอ่านข้อมูลจาก n8n webhook แล้วแสดงเป็นตาราง (ฝั่งแอดมิน)
+3. n8n อ่านข้อมูลจาก Google Sheets แล้วแปลงเป็น JSON ที่หน้าเว็บใช้งานได้
+4. หน้าเว็บฝั่งแอดมิน (Vue) ดึงข้อมูลจาก n8n webhook แล้วแสดงเป็นตาราง
+
+หมายเหตุ
+- โปรเจคนี้ทำเพื่อให้ "แอดมิน" ใช้งานเป็นหลัก (ไม่มีระบบล็อกอิน/ล็อกเอาท์ในตัวโปรเจค)
+- เวลาเทสใน n8n ด้วยปุ่ม `Execute workflow` จะใช้ URL กลุ่ม `/webhook-test/*`
+- เวลาใช้งานจริงต้อง "Activate workflow" แล้วใช้ URL กลุ่ม `/webhook/*` ไม่งั้นจะเจอ 404 ว่า webhook ไม่ถูก register
 
 ## การรันระบบ
 
-### 1) รัน n8n (Docker)
+### 1) รัน n8n ด้วย Docker
 
 ```bash
 docker compose up -d
@@ -35,64 +34,20 @@ http://localhost:5678
 docker compose down
 ```
 
-หมายเหตุ
-- ข้อมูลของ n8n ถูกเก็บไว้ที่โฟลเดอร์ `n8n_data/` (เป็น volume ของ container)
-- ใน repo นี้มีไฟล์ workflow export ไว้ให้ทีมต่อยอดที่ `Json/admin.json`
+ข้อมูลของ n8n จะถูกเก็บถาวรไว้ในโฟลเดอร์ `n8n_data/` (volume)
 
-### 2) รันเว็บ (Vue)
+### 2) รันเว็บ Vue (ฝั่งแอดมิน)
 
 ```bash
 npm install
 npm run serve
 ```
 
-## Webhook ที่หน้าเว็บเรียกใช้ (ค่าเริ่มต้นในโค้ด)
+## จุดเชื่อมต่อ (Webhook) ที่หน้าเว็บเรียกใช้
 
-หมายเหตุ: URL จริงที่ใช้งานจะขึ้นกับว่า workflow ใน n8n “เปิด Active” หรือกำลัง “Execute workflow” อยู่
+ค่าเริ่มต้นในโค้ดอาจตั้งไว้สำหรับการทดสอบ (เช่น `/webhook-test/*`) คุณสามารถเปลี่ยนได้ผ่านไฟล์ `.env`
 
-### รายการ “เบิก” (ตัวอย่างหน้า About)
-
-ไฟล์หน้าเว็บ: `src/views/AboutView.vue`
-- อ่านข้อมูลจาก: `VUE_APP_N8N_READ_WEBHOOK_URL`
-- ถ้าไม่ตั้ง env จะใช้ค่าเริ่มต้น: `http://localhost:5678/webhook/data`
-
-### ส่งข้อมูล “คืน” (ตัวอย่างหน้า Register)
-
-ไฟล์หน้าเว็บ: `src/views/Register.vue`
-- ส่งข้อมูลไปที่: `VUE_APP_N8N_WEBHOOK_URL`
-- ถ้าไม่ตั้ง env จะใช้ค่าเริ่มต้น (โหมดเทสของ n8n): `http://localhost:5678/webhook-test/register`
-
-### รายการ “คืน” (หน้า AdminApprove)
-
-ไฟล์หน้าเว็บ: `src/views/AdminApprove.vue`
-- อ่านข้อมูลจาก: `VUE_APP_N8N_RETURN_READ_URL` (ค่าเริ่มต้น: `http://localhost:5678/webhook/return-data`)
-- URL สำหรับ action (ถ้ามีทำต่อในอนาคต): `VUE_APP_N8N_RETURN_ACTION_URL` (ค่าเริ่มต้น: `http://localhost:5678/webhook/return-action`)
-
-## โครงสร้างข้อมูลที่หน้าเว็บต้องการ (Return)
-
-ตัวอย่าง JSON ที่หน้าเว็บคาดหวัง (Return):
-
-```json
-[
-  {
-    "timestamp": "14/4/2026, 16:12:37",
-    "fullname": "ชื่อ-นามสกุล",
-    "company": "บริษัท/หน่วยงาน",
-    "phone": "เบอร์โทร",
-    "email": "อีเมล",
-    "itemName": "Laptop",
-    "quantity": 1,
-    "assetTag": "SN001",
-    "status": "รอตรวจรับ",
-    "adminNote": "-",
-    "rowNumber": "2"
-  }
-]
-```
-
-## ตั้งค่า Environment (ตัวเลือก)
-
-ถ้าต้องการเปลี่ยน URL โดยไม่แก้โค้ด ให้สร้างไฟล์ `.env` ที่ root ของโปรเจค แล้วกำหนดค่า เช่น:
+ตัวอย่าง `.env`:
 
 ```env
 VUE_APP_N8N_READ_WEBHOOK_URL=http://localhost:5678/webhook/data
@@ -100,4 +55,11 @@ VUE_APP_N8N_WEBHOOK_URL=http://localhost:5678/webhook-test/register
 VUE_APP_N8N_RETURN_READ_URL=http://localhost:5678/webhook-test/return-data
 VUE_APP_N8N_RETURN_ACTION_URL=http://localhost:5678/webhook-test/return-action
 ```
+
+## ไฟล์สำคัญ
+
+- `docker-compose.yml` รัน n8n
+- `n8n_data/` เก็บข้อมูล n8n แบบถาวร (ห้ามลบถ้ายังต้องใช้ workflow/credential เดิม)
+- `Json/admin.json` ตัวอย่างไฟล์ export workflow จาก n8n
+- `src/` โค้ด Vue ฝั่งแอดมิน
 
