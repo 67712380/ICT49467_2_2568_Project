@@ -2,6 +2,12 @@
 node_modules
 /dist
 
+# n8n local data (contains credentials/db)
+/n8n_data
+
+# local secrets
+/Json/*.txt
+
 
 # local env files
 .env.local
