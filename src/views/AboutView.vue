@@ -1,6 +1,13 @@
 <template>
   <div class="dashboard">
 
+    <!-- Canvas background (shared with HomeView) -->
+    <div class="canvas-bg" aria-hidden="true">
+      <div class="grid-lines"></div>
+      <div class="geo geo-1"></div>
+      <div class="geo geo-2"></div>
+    </div>
+
     <!-- Canvas-design: structured grid ruler decoration -->
     <div class="ruler-top" aria-hidden="true">
       <div class="ruler-mark" v-for="n in 12" :key="n"></div>
@@ -12,10 +19,10 @@
         <div class="header-left">
           <p class="eyebrow">
             <span class="material-symbols-rounded eyebrow-ico">grid_on</span>
-            แดชบอร์ดอุปกรณ์
+            Equipment Request Dashboard
           </p>
-          <h1 class="dash-title">ภาพรวมคำขอเบิกอุปกรณ์</h1>
-          <p class="dash-subtitle">ติดตามข้อมูลคำขอจาก Google Sheets ผ่าน n8n ได้ในหน้าเดียว</p>
+          <h1 class="dash-title">Borrow Request Overview</h1>
+          <p class="dash-subtitle">Track all equipment borrow requests — click any row to open the approval form.</p>
         </div>
 
         <div class="header-right">
@@ -274,6 +281,52 @@ onMounted(() => { fetchData() })
   min-height: 100vh;
   background: var(--snow);
   font-family: 'Noto Sans Thai', 'DM Sans', system-ui, sans-serif;
+  position: relative;
+}
+
+/* ══════════════════════════════════════════════
+   CANVAS BACKGROUND (shared style from HomeView)
+══════════════════════════════════════════════ */
+.canvas-bg {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  overflow: hidden;
+}
+
+.grid-lines {
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(37,99,235,0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(37,99,235,0.04) 1px, transparent 1px);
+  background-size: 56px 56px;
+}
+
+.geo {
+  position: absolute;
+  border-radius: 50%;
+  opacity: 0.05;
+}
+
+.geo-1 {
+  width: 600px; height: 600px;
+  background: #2563eb;
+  top: -200px; right: -100px;
+  animation: float 22s ease-in-out infinite;
+}
+
+.geo-2 {
+  width: 400px; height: 400px;
+  background: #3b82f6;
+  bottom: -120px; left: -80px;
+  animation: float 30s ease-in-out infinite reverse;
+}
+
+@keyframes float {
+  0%, 100% { transform: translate(0, 0); }
+  50%       { transform: translate(18px, -24px); }
 }
 
 /* ══════════════════════════════════════════════

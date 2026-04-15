@@ -349,8 +349,8 @@
       "type": "n8n-nodes-base.webhook",
       "typeVersion": 2.1,
       "position": [
-        288,
-        864
+        304,
+        704
       ],
       "id": "bbc73c44-2e63-417b-8060-2640e8caef53",
       "name": "Webhook1",
@@ -377,8 +377,8 @@
       "type": "n8n-nodes-base.googleSheets",
       "typeVersion": 4.7,
       "position": [
-        496,
-        864
+        512,
+        704
       ],
       "id": "791c4a10-94bc-4a97-b526-cfd641a4a61c",
       "name": "Get row(s) in sheet1",
@@ -472,8 +472,8 @@
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.4,
       "position": [
-        704,
-        864
+        720,
+        704
       ],
       "id": "9aaebab9-6606-487a-81ee-8d1a88fdc5d3",
       "name": "Edit Fields1"
@@ -486,22 +486,22 @@
       "type": "n8n-nodes-base.respondToWebhook",
       "typeVersion": 1.5,
       "position": [
-        912,
-        864
+        928,
+        704
       ],
       "id": "99853d78-3b7b-4da7-bea3-1aa126e350a0",
       "name": "Respond to Webhook1"
     },
     {
       "parameters": {
-        "content": "Flow- : แสดงข้อมูลการคืนอุปกรณ์\n\n",
+        "content": "Flow-5 : แสดงข้อมูลการคืนอุปกรณ์\n\n",
         "height": 80,
         "width": 320
       },
       "type": "n8n-nodes-base.stickyNote",
       "position": [
-        1120,
-        880
+        1136,
+        720
       ],
       "typeVersion": 1,
       "id": "ac7682c3-d58d-4c6d-8875-8dfb4fc74723",
@@ -535,8 +535,8 @@
       "type": "n8n-nodes-base.googleSheetsTrigger",
       "typeVersion": 1,
       "position": [
-        304,
-        1040
+        320,
+        880
       ],
       "id": "a7a9a5ff-0866-44df-aaf3-06439e4f62f0",
       "name": "Google Sheets Trigger2",
@@ -554,8 +554,8 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        512,
-        1040
+        528,
+        880
       ],
       "id": "c2a0f05b-5eac-4cb4-86de-be95468227d5",
       "name": "Code in JavaScript2"
@@ -571,8 +571,8 @@
       "type": "n8n-nodes-base.gmail",
       "typeVersion": 2.2,
       "position": [
-        720,
-        1040
+        736,
+        880
       ],
       "id": "27c1b3b4-4539-45f4-b3e7-f1073dc17a6a",
       "name": "Send a message2",
@@ -586,14 +586,14 @@
     },
     {
       "parameters": {
-        "content": "Flow-3 : คืนอุปกรณ์และแจ้งadmin\n",
+        "content": "Flow-6 : คืนอุปกรณ์และแจ้งadmin\n",
         "height": 80,
         "width": 320
       },
       "type": "n8n-nodes-base.stickyNote",
       "position": [
-        944,
-        1056
+        960,
+        896
       ],
       "typeVersion": 1,
       "id": "54bc7f30-dd62-4fc4-a072-6526d9d9ccca",
@@ -830,6 +830,122 @@
       "typeVersion": 1,
       "id": "61656c6c-d957-4c35-a1de-f52cc62eb7c7",
       "name": "Sticky Note5"
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "return-action",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "name": "Webhook (Return Action)",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        320,
+        1072
+      ],
+      "id": "8005bd27-2ae6-498b-997c-73043dc127a5",
+      "webhookId": "return-action-webhook-001"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "1JQIEu8vcwteRopkAzGlBRjmu7WPbjGq2YwLwHC7Xnf8",
+          "mode": "list",
+          "cachedResultName": "From- IT",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1JQIEu8vcwteRopkAzGlBRjmu7WPbjGq2YwLwHC7Xnf8/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 2049651687,
+          "mode": "list",
+          "cachedResultName": "คืนอุปกรณ์",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1JQIEu8vcwteRopkAzGlBRjmu7WPbjGq2YwLwHC7Xnf8/edit#gid=2049651687"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Email": "={{ $json.body.email }}",
+            "สถานะคำขอ": "={{ $json.body.status === 'returned' ? 'คืนแล้ว' : 'ปฏิเสธการคืน' }}"
+          },
+          "matchingColumns": [
+            "Email"
+          ],
+          "schema": [
+            {
+              "id": "Email",
+              "displayName": "Email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "สถานะคำขอ",
+              "displayName": "สถานะคำขอ",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "name": "Update Return Status in Sheet",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        544,
+        1072
+      ],
+      "id": "ea11d7cb-a1d0-457d-b131-a1c7816ed002",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "JZLANDT9EIpKZggw",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={ \"ok\": true }",
+        "options": {
+          "responseCode": 200
+        }
+      },
+      "name": "Respond OK",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.5,
+      "position": [
+        768,
+        1072
+      ],
+      "id": "d84fc773-ac82-4a6a-8a60-ff8477ca3f72"
+    },
+    {
+      "parameters": {
+        "content": "\n\nFlow-7อนุมัติการคืนลงซีส",
+        "height": 132,
+        "width": 392
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        992,
+        1072
+      ],
+      "typeVersion": 1,
+      "id": "898f0072-41f3-4932-93b0-7e7e4c33e56a",
+      "name": "Flow Description"
     }
   ],
   "pinData": {},
@@ -998,6 +1114,28 @@
           }
         ]
       ]
+    },
+    "Webhook (Return Action)": {
+      "main": [
+        [
+          {
+            "node": "Update Return Status in Sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update Return Status in Sheet": {
+      "main": [
+        [
+          {
+            "node": "Respond OK",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     }
   },
   "active": true,
@@ -1008,7 +1146,7 @@
     "callerPolicy": "workflowsFromSameOwner",
     "availableInMCP": false
   },
-  "versionId": "5287198e-d23d-44c3-91a4-19ccf5841009",
+  "versionId": "931c2a18-707d-4c48-8454-b32cf1914d05",
   "meta": {
     "templateCredsSetupCompleted": true,
     "instanceId": "0a125e46a1edc7517d26c8d300f96f70d272b51c3b9cad0afdd928849901f792"
