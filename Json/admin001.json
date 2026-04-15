@@ -1,0 +1,1018 @@
+{
+  "name": "admin",
+  "nodes": [
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "documentId": {
+          "__rl": true,
+          "value": "1JQIEu8vcwteRopkAzGlBRjmu7WPbjGq2YwLwHC7Xnf8",
+          "mode": "list",
+          "cachedResultName": "From- IT",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1JQIEu8vcwteRopkAzGlBRjmu7WPbjGq2YwLwHC7Xnf8/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1095979105,
+          "mode": "list",
+          "cachedResultName": "การตอบแบบฟอร์ม 1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1JQIEu8vcwteRopkAzGlBRjmu7WPbjGq2YwLwHC7Xnf8/edit#gid=1095979105"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTrigger",
+      "typeVersion": 1,
+      "position": [
+        288,
+        -96
+      ],
+      "id": "6071bb79-f683-4974-a2ad-ee584b54598a",
+      "name": "Google Sheets Trigger1",
+      "credentials": {
+        "googleSheetsTriggerOAuth2Api": {
+          "id": "LbhrvdX9JdPDVU9c",
+          "name": "Google Sheets Trigger account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "return items.map((item) => {\n  const j = item.json;\n\n  const clean = (s) =>\n    String(s || \"\")\n      .replace(/[\\s\\u200B-\\u200D\\uFEFF]/g, \"\")\n      .toLowerCase();\n\n  const findValue = (keywordGroups, fallback = \"-\") => {\n    const keys = Object.keys(j);\n    for (const key of keys) {\n      const ck = clean(key);\n      const matched = keywordGroups.some((group) =>\n        group.every((kw) => ck.includes(clean(kw)))\n      );\n      if (matched) {\n        const v = j[key];\n        if (v !== undefined && v !== null && String(v).trim() !== \"\") {\n          return String(v).trim();\n        }\n      }\n    }\n    return fallback;\n  };\n\n  const fullname = findValue([[\"ชื่อ\"], [\"นามสกุล\"]], \"-\");\n  const company = findValue([[\"บริษัท\"], [\"หน่วยงาน\"]], \"-\");\n  const phone = findValue([[\"เบอร์\", \"โทร\"], [\"โทรศัพท์\"], [\"เบอร์โทร\"]], \"-\");\n  const itemName = findValue([[\"รายชื่อ\", \"อุปกรณ์\"], [\"อุปกรณ์\"]], \"-\");\n  const quantity = findValue([[\"จำนวน\", \"เบิก\"], [\"จำนวน\"]], \"-\");\n  const emailUser = findValue([[\"email\"], [\"อีเมล\"]], \"-\");\n  const reason = findValue([[\"เหตุผล\", \"เบิก\"], [\"เหตุผล\"]], \"-\");\n\n  let requestDate = findValue([[\"ประทับเวลา\"], [\"วันที่\"], [\"timestamp\"]], \"-\");\n  const serial = Number(requestDate);\n  if (!Number.isNaN(serial) && serial > 1000) {\n    const excelEpoch = new Date(1899, 11, 30);\n    const dt = new Date(excelEpoch.getTime() + serial * 86400000);\n    requestDate = dt.toLocaleString(\"th-TH\");\n  }\n\n  const status = findValue([[\"สถานะ\", \"คำขอ\"], [\"สถานะ\"]], \"รออนุมัติ\");\n\n  j.mailToAdmin = \"sakkarat.tai@gmail.com\"; // เปลี่ยนเป็นเมลแอดมินจริงได้\n  j.mailSubjectAdmin = \"มีคำขอเบิกใหม่ รออนุมัติ\";\n  j.mailBodyAdmin =\n`มีคำขอเบิกใหม่เข้าระบบ\n\nวันที่: ${requestDate}\nชื่อ-นามสกุล: ${fullname}\nบริษัท/หน่วยงาน: ${company}\nเบอร์โทร: ${phone}\nรายการอุปกรณ์: ${itemName}\nจำนวนที่เบิก: ${quantity}\nอีเมลผู้ขอ: ${emailUser}\nเหตุผลการเบิก: ${reason}\nสถานะคำขอ: ${status}\n\nกรุณาเข้าเว็บ Admin เพื่ออนุมัติ`;\n\n  return item;\n});"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        496,
+        -96
+      ],
+      "id": "03e95e64-99cb-4619-b121-e7717228474f",
+      "name": "Code in JavaScript1"
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $json.mailToAdmin }}",
+        "subject": "={{$json.mailSubjectAdmin}}",
+        "emailType": "text",
+        "message": "={{ $json.mailBodyAdmin }}\n",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        704,
+        -96
+      ],
+      "id": "3603a0e3-6166-4684-8567-c463c01ea32c",
+      "name": "Send a message1",
+      "webhookId": "d456d432-7996-4809-ad66-73cb6c51787d",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "9HUILLSb7XwpNdBe",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "Flow-1 : รับคำขอเบิกและแจ้งadmin",
+        "height": 80,
+        "width": 320
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        928,
+        -80
+      ],
+      "typeVersion": 1,
+      "id": "185533f6-fc72-44c0-9f93-428f13baa5d8",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "documentId": {
+          "__rl": true,
+          "value": "1JQIEu8vcwteRopkAzGlBRjmu7WPbjGq2YwLwHC7Xnf8",
+          "mode": "list",
+          "cachedResultName": "From- IT",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1JQIEu8vcwteRopkAzGlBRjmu7WPbjGq2YwLwHC7Xnf8/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1095979105,
+          "mode": "list",
+          "cachedResultName": "การตอบแบบฟอร์ม 1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1JQIEu8vcwteRopkAzGlBRjmu7WPbjGq2YwLwHC7Xnf8/edit#gid=1095979105"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTrigger",
+      "typeVersion": 1,
+      "position": [
+        288,
+        112
+      ],
+      "id": "d13bc75e-19a1-4390-bd65-91b243c95dfa",
+      "name": "Google Sheets Trigger",
+      "credentials": {
+        "googleSheetsTriggerOAuth2Api": {
+          "id": "LbhrvdX9JdPDVU9c",
+          "name": "Google Sheets Trigger account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "return items.map((item) => {\n  const j = item.json;\n\n  const clean = (s) =>\n    String(s || \"\")\n      .replace(/[\\s\\u200B-\\u200D\\uFEFF]/g, \"\")\n      .toLowerCase();\n\n  const findValue = (keywordGroups, fallback = \"-\") => {\n    const keys = Object.keys(j);\n    for (const key of keys) {\n      const ck = clean(key);\n      const matched = keywordGroups.some((group) =>\n        group.every((kw) => ck.includes(clean(kw)))\n      );\n      if (matched) {\n        const v = j[key];\n        if (v !== undefined && v !== null && String(v).trim() !== \"\") {\n          return String(v).trim();\n        }\n      }\n    }\n    return fallback;\n  };\n\n  const fullname = findValue([[\"ชื่อ\"], [\"นามสกุล\"]], \"\");\n  const company = findValue([[\"บริษัท\"], [\"หน่วยงาน\"]], \"-\");\n  const phone = findValue([[\"เบอร์\", \"โทร\"], [\"โทรศัพท์\"], [\"เบอร์โทร\"]], \"-\");\n  const itemName = findValue([[\"อุปกรณ์\"]], \"-\");\n  const quantity = findValue([[\"จำนวน\"]], \"-\");\n  const email = findValue([[\"email\"]], \"\");\n\n  // วันที่\n  let requestDate = findValue([[\"ประทับเวลา\"], [\"วันที่\"]], \"\");\n  const serial = Number(requestDate);\n  if (!Number.isNaN(serial) && serial > 1000) {\n    const excelEpoch = new Date(1899, 11, 30);\n    const dt = new Date(excelEpoch.getTime() + serial * 86400000);\n    requestDate = dt.toLocaleString(\"th-TH\");\n  }\n\n  const status = findValue([[\"สถานะ\"], [\"คำขอ\"]], \"Pending\");\n\n  j.mailTo = email;\n  j.mailSubject = \"แจ้งสถานะคำขอเบิกอุปกรณ์: รออนุมัติ\";\n  j.mailBody =\n`เรียน ${fullname}\n\nระบบได้รับคำขอเบิกอุปกรณ์ของคุณเรียบร้อยแล้ว\n\nวันที่: ${requestDate}\nบริษัท/หน่วยงาน: ${company}\nเบอร์โทร: ${phone}\nรายการอุปกรณ์: ${itemName}\nจำนวนที่เบิก: ${quantity}\nสถานะคำขอ: ${status}\n\nขอบคุณครับ`;\n\n  return item;\n});"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        496,
+        112
+      ],
+      "id": "ef4956dc-6a30-4ed0-bd76-70ef251f22c3",
+      "name": "Code in JavaScript"
+    },
+    {
+      "parameters": {
+        "sendTo": "={{$json.mailTo}}",
+        "subject": "={{ $json.mailSubject }}",
+        "emailType": "text",
+        "message": "={{$json.mailBody}}\n",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        704,
+        112
+      ],
+      "id": "1bd0af47-6139-41de-aabb-8c7cde2bc969",
+      "name": "Send a message",
+      "webhookId": "d456d432-7996-4809-ad66-73cb6c51787d",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "9HUILLSb7XwpNdBe",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "Flow-2 : รับคำขอเบิกและแจ้งuser\n",
+        "height": 80,
+        "width": 320
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        928,
+        128
+      ],
+      "typeVersion": 1,
+      "id": "1efd26c8-bf4d-48f6-a4d7-0697b880f1b1",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "path": "data",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        288,
+        288
+      ],
+      "id": "2e863b98-aaaf-424f-942a-8a45865bb9bc",
+      "name": "Webhook",
+      "webhookId": "8688a68f-af6f-4a2a-abb7-1ccfa7e361dd"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1JQIEu8vcwteRopkAzGlBRjmu7WPbjGq2YwLwHC7Xnf8",
+          "mode": "list",
+          "cachedResultName": "From- IT",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1JQIEu8vcwteRopkAzGlBRjmu7WPbjGq2YwLwHC7Xnf8/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1095979105,
+          "mode": "list",
+          "cachedResultName": "การตอบแบบฟอร์ม 1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1JQIEu8vcwteRopkAzGlBRjmu7WPbjGq2YwLwHC7Xnf8/edit#gid=1095979105"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        496,
+        288
+      ],
+      "id": "23ec1fe0-5996-40e4-9361-7ee7faa9a1b4",
+      "name": "Get row(s) in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "JZLANDT9EIpKZggw",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "59732fea-b35d-4427-9531-696437338fe2",
+              "name": "timestamp",
+              "value": "={{$json[\"ประทับเวลา\"] \n\n $json[\"วันที่\"] \n\n \"-\"}}",
+              "type": "string"
+            },
+            {
+              "id": "85186bd9-9ae8-40e1-91f3-783b7a9d4a5e",
+              "name": "fullname",
+              "value": "={{$json[\"ชื่อ-นามสกุล\"] \n\n \"-\"}}",
+              "type": "string"
+            },
+            {
+              "id": "382a768c-26d1-4c9d-80e3-a3d51d39af8d",
+              "name": "company",
+              "value": "={{ (Object.keys($json).find(k => /บริษัท|หน่วยงาน/i.test(k.replace(/\\s/g,\"\"))) && $json[Object.keys($json).find(k => /บริษัท|หน่วยงาน/i.test(k.replace(/\\s/g,\"\")))]) || \"-\" }}",
+              "type": "string"
+            },
+            {
+              "id": "5029e839-3768-4415-873a-4263c572cb69",
+              "name": "phone",
+              "value": "={{$json[\"เบอร์โทร\"] || $json[\"เบอร์โทรศัพท์\"] || \"-\"}}",
+              "type": "string"
+            },
+            {
+              "id": "38e269b9-cd53-4c28-a25b-e0a332f3c157",
+              "name": "email",
+              "value": "={{$json[\"Email\"] \n\n $json[\"email\"] \n\n \"-\"}}",
+              "type": "string"
+            },
+            {
+              "id": "ffb98ecc-4f82-4877-b9ba-9fc823ba4fdd",
+              "name": "itemName",
+              "value": "={{$json[\"รายชื่ออุปกรณ์\"] \n\n $json[\"รายชื่อ - อุปกรณ์\"] \n\n \"-\"}}",
+              "type": "string"
+            },
+            {
+              "id": "98ec57ca-0c20-424d-a011-1a08c1a173f8",
+              "name": "quantity",
+              "value": "={{Number($json[\"จำนวนที่เบิก\"] || 0)}}",
+              "type": "number"
+            },
+            {
+              "id": "d40ff7d2-c91f-4904-91e6-520a75a6eb4d",
+              "name": "reason",
+              "value": "={{$json[\"เหตุผลการเบิก\"] \n\n $json[\"เหตุผล\"] \n\n \"-\"}}",
+              "type": "string"
+            },
+            {
+              "id": "7bdae9b7-f3cb-45ee-ba8c-a2af94807896",
+              "name": "status",
+              "value": "={{$json[\"สถานะคำขอ\"] \n\n $json[\"สถานะ\"] \n\n \"รออนุมัติ\"}}",
+              "type": "string"
+            },
+            {
+              "id": "d8213968-421f-441a-96ff-b426a00d6e9e",
+              "name": "approvedBy",
+              "value": "=={{$json[\"ผู้อนุมัติ\"] || \"-\"}}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        704,
+        288
+      ],
+      "id": "775f427c-d469-4b47-9b24-94dd2b8af1de",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "respondWith": "allIncomingItems",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.5,
+      "position": [
+        912,
+        288
+      ],
+      "id": "e32af3b9-7d37-4a18-91be-9b8707a10450",
+      "name": "Respond to Webhook"
+    },
+    {
+      "parameters": {
+        "content": "Flow3 : แสดงข้อมูลการเบิกบนเว็บ\n\n",
+        "height": 80,
+        "width": 320
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        1120,
+        304
+      ],
+      "typeVersion": 1,
+      "id": "9f789b47-302e-4c48-a1f8-700a281077f5",
+      "name": "Sticky Note2"
+    },
+    {
+      "parameters": {
+        "path": "return-data",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        288,
+        864
+      ],
+      "id": "bbc73c44-2e63-417b-8060-2640e8caef53",
+      "name": "Webhook1",
+      "webhookId": "8688a68f-af6f-4a2a-abb7-1ccfa7e361dd"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1JQIEu8vcwteRopkAzGlBRjmu7WPbjGq2YwLwHC7Xnf8",
+          "mode": "list",
+          "cachedResultName": "From- IT",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1JQIEu8vcwteRopkAzGlBRjmu7WPbjGq2YwLwHC7Xnf8/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 2049651687,
+          "mode": "list",
+          "cachedResultName": "คืนอุปกรณ์",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1JQIEu8vcwteRopkAzGlBRjmu7WPbjGq2YwLwHC7Xnf8/edit#gid=2049651687"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        496,
+        864
+      ],
+      "id": "791c4a10-94bc-4a97-b526-cfd641a4a61c",
+      "name": "Get row(s) in sheet1",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "JZLANDT9EIpKZggw",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "59732fea-b35d-4427-9531-696437338fe2",
+              "name": "timestamp",
+              "value": "={{$json[\"ประทับเวลา\"] \n\n $json[\"วันที่\"] \n\n \"-\"}}",
+              "type": "string"
+            },
+            {
+              "id": "85186bd9-9ae8-40e1-91f3-783b7a9d4a5e",
+              "name": "fullname",
+              "value": "={{$json[\"ชื่อ-นามสกุล\"] \n\n \"-\"}}",
+              "type": "string"
+            },
+            {
+              "id": "382a768c-26d1-4c9d-80e3-a3d51d39af8d",
+              "name": "company",
+              "value": "={{ (Object.keys($json).find(k => /บริษัท|หน่วยงาน/i.test(k.replace(/\\s/g,\"\"))) && $json[Object.keys($json).find(k => /บริษัท|หน่วยงาน/i.test(k.replace(/\\s/g,\"\")))]) || \"-\" }}",
+              "type": "string"
+            },
+            {
+              "id": "5029e839-3768-4415-873a-4263c572cb69",
+              "name": "phone",
+              "value": "={{$json[\"เบอร์โทร\"] || $json[\"เบอร์โทรศัพท์\"] || \"-\"}}",
+              "type": "string"
+            },
+            {
+              "id": "38e269b9-cd53-4c28-a25b-e0a332f3c157",
+              "name": "email",
+              "value": "={{$json[\"Email\"] \n\n $json[\"email\"] \n\n \"-\"}}",
+              "type": "string"
+            },
+            {
+              "id": "ffb98ecc-4f82-4877-b9ba-9fc823ba4fdd",
+              "name": "itemName",
+              "value": "={{$json[\"รายชื่ออุปกรณ์\"] \n\n $json[\"รายชื่อ - อุปกรณ์\"] \n\n \"-\"}}",
+              "type": "string"
+            },
+            {
+              "id": "98ec57ca-0c20-424d-a011-1a08c1a173f8",
+              "name": "quantity",
+              "value": "={{ Number($json[\"จำนวน\"] ?? $json[\"Qty\"] ?? 1) }}",
+              "type": "number"
+            },
+            {
+              "id": "d40ff7d2-c91f-4904-91e6-520a75a6eb4d",
+              "name": "assetTag",
+              "value": "={{ $json[\"เลขเครื่อง (asset_tag)\"] || $json[\"เลขเครื่อง(asset_tag)\"] || \"-\" }}\n\n",
+              "type": "string"
+            },
+            {
+              "id": "7bdae9b7-f3cb-45ee-ba8c-a2af94807896",
+              "name": "status",
+              "value": "={{ $json[\"สถานะคำขอ\"] || \"รอตรวจรับ\" }}",
+              "type": "string"
+            },
+            {
+              "id": "d8213968-421f-441a-96ff-b426a00d6e9e",
+              "name": "approvedBy",
+              "value": "=={{$json[\"ผู้อนุมัติ\"] || \"-\"}}",
+              "type": "string"
+            },
+            {
+              "id": "34544e39-7ef7-4a62-926b-0511c282b618",
+              "name": "adminNote",
+              "value": "={{ $json[\"หมายเหตุแอดมิน\"] ?? \"-\" }}",
+              "type": "string"
+            },
+            {
+              "id": "356ae147-db17-434d-a548-00e28d759582",
+              "name": "rowNumber",
+              "value": "={{ $json.row_number \n\n $json.rowNumber \n\n \"-\" }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        704,
+        864
+      ],
+      "id": "9aaebab9-6606-487a-81ee-8d1a88fdc5d3",
+      "name": "Edit Fields1"
+    },
+    {
+      "parameters": {
+        "respondWith": "allIncomingItems",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.5,
+      "position": [
+        912,
+        864
+      ],
+      "id": "99853d78-3b7b-4da7-bea3-1aa126e350a0",
+      "name": "Respond to Webhook1"
+    },
+    {
+      "parameters": {
+        "content": "Flow- : แสดงข้อมูลการคืนอุปกรณ์\n\n",
+        "height": 80,
+        "width": 320
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        1120,
+        880
+      ],
+      "typeVersion": 1,
+      "id": "ac7682c3-d58d-4c6d-8875-8dfb4fc74723",
+      "name": "Sticky Note3"
+    },
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "documentId": {
+          "__rl": true,
+          "value": "1JQIEu8vcwteRopkAzGlBRjmu7WPbjGq2YwLwHC7Xnf8",
+          "mode": "list",
+          "cachedResultName": "From- IT",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1JQIEu8vcwteRopkAzGlBRjmu7WPbjGq2YwLwHC7Xnf8/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 2049651687,
+          "mode": "list",
+          "cachedResultName": "คืนอุปกรณ์",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1JQIEu8vcwteRopkAzGlBRjmu7WPbjGq2YwLwHC7Xnf8/edit#gid=2049651687"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTrigger",
+      "typeVersion": 1,
+      "position": [
+        304,
+        1040
+      ],
+      "id": "a7a9a5ff-0866-44df-aaf3-06439e4f62f0",
+      "name": "Google Sheets Trigger2",
+      "credentials": {
+        "googleSheetsTriggerOAuth2Api": {
+          "id": "LbhrvdX9JdPDVU9c",
+          "name": "Google Sheets Trigger account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "return items.map((item) => {\n  const j = item.json;\n\n  const clean = (s) =>\n    String(s || \"\")\n      .replace(/[\\s\\u200B-\\u200D\\uFEFF]/g, \"\")\n      .toLowerCase();\n\n  const findValue = (keywordGroups, fallback = \"-\") => {\n    const keys = Object.keys(j);\n    for (const key of keys) {\n      const ck = clean(key);\n      const matched = keywordGroups.some((group) =>\n        group.every((kw) => ck.includes(clean(kw)))\n      );\n      if (matched) {\n        const v = j[key];\n        if (v !== undefined && v !== null && String(v).trim() !== \"\") {\n          return String(v).trim();\n        }\n      }\n    }\n    return fallback;\n  };\n\n  const fullname = findValue([[\"ชื่อ\"], [\"นามสกุล\"]], \"-\");\n  const company = findValue([[\"บริษัท\"], [\"หน่วยงาน\"]], \"-\");\n  const phone = findValue([[\"เบอร์\", \"โทร\"], [\"โทรศัพท์\"], [\"เบอร์โทร\"]], \"-\");\n  const emailUser = findValue([[\"email\"]], \"-\");\n  const itemName = findValue([[\"รายการ\", \"อุปกรณ์\"], [\"อุปกรณ์\"]], \"-\");\n  const quantity = findValue([[\"จำนวน\"]], \"-\");\n  const assetTag = findValue([[\"asset\", \"tag\"], [\"เลขเครื่อง\"]], \"-\");\n\n  // วันที่คืน\n  let returnDate = findValue([[\"ประทับเวลา\"], [\"วันที่\", \"คืน\"], [\"วันที่\"]], \"-\");\n  const serial = Number(returnDate);\n  if (!Number.isNaN(serial) && serial > 1000) {\n    const excelEpoch = new Date(1899, 11, 30);\n    const dt = new Date(excelEpoch.getTime() + serial * 86400000);\n    returnDate = dt.toLocaleString(\"th-TH\");\n  }\n\n  const status = findValue([[\"สถานะ\"], [\"คำขอ\"]], \"รอตรวจรับ\");\n\n  // แจ้งเฉพาะ admin\n  j.mailToAdmin = \"sakkarat.tai@gmail.com\"; // เปลี่ยนเป็นเมล admin จริงถ้าต้องการ\n  j.mailSubjectAdmin = \"มีคำขอคืน Laptop ใหม่\";\n  j.mailBodyAdmin =\n`มีคำขอคืนอุปกรณ์ใหม่\n\nวันที่คืน: ${returnDate}\nชื่อ-นามสกุล: ${fullname}\nบริษัท/หน่วยงาน: ${company}\nเบอร์โทร: ${phone}\nอีเมลผู้คืน: ${emailUser}\nรายการอุปกรณ์: ${itemName}\nจำนวนที่คืน: ${quantity}\nเลขเครื่อง (Asset Tag): ${assetTag}\nสถานะ: ${status}\n\nกรุณาเข้าหน้า Admin เพื่อตรวจรับรายการคืน`;\n\n  return item;\n});\n\n\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        512,
+        1040
+      ],
+      "id": "c2a0f05b-5eac-4cb4-86de-be95468227d5",
+      "name": "Code in JavaScript2"
+    },
+    {
+      "parameters": {
+        "sendTo": "={{$json.mailToAdmin}}",
+        "subject": "={{$json.mailSubjectAdmin}}",
+        "emailType": "text",
+        "message": "={{$json.mailBodyAdmin}}\n",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        720,
+        1040
+      ],
+      "id": "27c1b3b4-4539-45f4-b3e7-f1073dc17a6a",
+      "name": "Send a message2",
+      "webhookId": "d456d432-7996-4809-ad66-73cb6c51787d",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "9HUILLSb7XwpNdBe",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "Flow-3 : คืนอุปกรณ์และแจ้งadmin\n",
+        "height": 80,
+        "width": 320
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        944,
+        1056
+      ],
+      "typeVersion": 1,
+      "id": "54bc7f30-dd62-4fc4-a072-6526d9d9ccca",
+      "name": "Sticky Note4"
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "register",
+        "options": {}
+      },
+      "name": "Webhook (Receive Approval)",
+      "type": "n8n-nodes-base.webhook",
+      "position": [
+        288,
+        496
+      ],
+      "typeVersion": 1,
+      "id": "311f7708-ea75-475e-a3fe-c9cd920248ef",
+      "webhookId": "f231c50a-fe4b-4511-9043-b323abf2cb03"
+    },
+    {
+      "parameters": {
+        "jsCode": "/* Prepare data for matching and updating */\nreturn {\n  \"ชื่อ-นามสกุล\": $json.body.name,\n  \"Email\": $json.body.email,\n  \"item\": $json.body.item,\n  \"qty\": $json.body.qty,\n  \"assetTag\": $json.body.assetTag\n   \n};"
+      },
+      "name": "Format Data for Update",
+      "type": "n8n-nodes-base.code",
+      "position": [
+        496,
+        496
+      ],
+      "typeVersion": 2,
+      "id": "41f7824a-6997-413d-bfbe-cc1836622060"
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $json[\"Email\"] }}",
+        "subject": "แจ้งผลการอนุมัติการเบิกอุปกรณ์",
+        "emailType": "text",
+        "message": "={{ 'เรียนคุณ ' + $json[\"ชื่อ-นามสกุล\"] + '\\n\\nคำขอเบิกอุปกรณ์ของคุณได้รับการอนุมัติเรียบร้อยแล้ว\\n\\nรายละเอียด:\\nอุปกรณ์: ' + $json[\"รายชื่ออุปกรณ์\"] + '\\nเลขเครื่อง (Asset Tag): ' + $json[\"เลขเครื่อง (asset_tag)\"] + '\\nจำนวนปริมาณ: ' + $json[\"จำนวนที่เบิก\"] + '\\n\\nติดต่อรับอุปกรณ์ได้ที่ห้อง IT\\n\\nขอบคุณครับ' }}\n\n",
+        "options": {}
+      },
+      "name": "Send Email to User",
+      "type": "n8n-nodes-base.gmail",
+      "position": [
+        944,
+        496
+      ],
+      "typeVersion": 2.2,
+      "id": "42d32532-a7c3-4eab-8ee8-21e7216adc60",
+      "webhookId": "e853e9ae-7685-45fb-b869-509c2802106e",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "9HUILLSb7XwpNdBe",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "1JQIEu8vcwteRopkAzGlBRjmu7WPbjGq2YwLwHC7Xnf8",
+          "mode": "list",
+          "cachedResultName": "From- IT",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1JQIEu8vcwteRopkAzGlBRjmu7WPbjGq2YwLwHC7Xnf8/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1095979105,
+          "mode": "list",
+          "cachedResultName": "การตอบแบบฟอร์ม 1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1JQIEu8vcwteRopkAzGlBRjmu7WPbjGq2YwLwHC7Xnf8/edit#gid=1095979105"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "เลขเครื่อง (asset_tag)": "={{ $json.assetTag }}",
+            "ผู้อนุมัติ": "Admin",
+            "ชื่อ-นามสกุล": "={{ $json['ชื่อ-นามสกุล'] }}",
+            "Email": "={{ $json.Email }}",
+            "สถานะคำขอ": "อนุมัติ",
+            "จำนวนที่เบิก": "={{ $json.qty }}",
+            "รายชื่ออุปกรณ์": "={{ $json.item }}"
+          },
+          "matchingColumns": [
+            "Email"
+          ],
+          "schema": [
+            {
+              "id": "ประทับเวลา",
+              "displayName": "ประทับเวลา",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "ชื่อ-นามสกุล",
+              "displayName": "ชื่อ-นามสกุล",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "บริษัท-หน่วยงาน ",
+              "displayName": "บริษัท-หน่วยงาน ",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "เบอร์โทร",
+              "displayName": "เบอร์โทร",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Email",
+              "displayName": "Email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "รายชื่ออุปกรณ์",
+              "displayName": "รายชื่ออุปกรณ์",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "จำนวนที่เบิก",
+              "displayName": "จำนวนที่เบิก",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "เหตุผลการเบิก",
+              "displayName": "เหตุผลการเบิก",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "สถานะคำขอ",
+              "displayName": "สถานะคำขอ",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "เลขเครื่อง (asset_tag)",
+              "displayName": "เลขเครื่อง (asset_tag)",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "ผู้อนุมัติ",
+              "displayName": "ผู้อนุมัติ",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        720,
+        496
+      ],
+      "id": "a53ebaf2-62ad-4a6c-99b4-e8ef452ee2a2",
+      "name": "Update row in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "JZLANDT9EIpKZggw",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "Flow4 : บันทึกการอนุมัติ/ส่งเมล/บันทึกลงซีส\n",
+        "height": 80,
+        "width": 320
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        1152,
+        512
+      ],
+      "typeVersion": 1,
+      "id": "61656c6c-d957-4c35-a1de-f52cc62eb7c7",
+      "name": "Sticky Note5"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Google Sheets Trigger1": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript1": {
+      "main": [
+        [
+          {
+            "node": "Send a message1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Sheets Trigger": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Get row(s) in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s) in sheet": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook1": {
+      "main": [
+        [
+          {
+            "node": "Get row(s) in sheet1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s) in sheet1": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields1": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Sheets Trigger2": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript2": {
+      "main": [
+        [
+          {
+            "node": "Send a message2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook (Receive Approval)": {
+      "main": [
+        [
+          {
+            "node": "Format Data for Update",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Format Data for Update": {
+      "main": [
+        [
+          {
+            "node": "Update row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update row in sheet": {
+      "main": [
+        [
+          {
+            "node": "Send Email to User",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "timeSavedMode": "fixed",
+    "callerPolicy": "workflowsFromSameOwner",
+    "availableInMCP": false
+  },
+  "versionId": "5287198e-d23d-44c3-91a4-19ccf5841009",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "0a125e46a1edc7517d26c8d300f96f70d272b51c3b9cad0afdd928849901f792"
+  },
+  "id": "F04ioIyQMJZnOQr6",
+  "tags": []
+}
